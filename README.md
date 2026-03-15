@@ -1,230 +1,260 @@
-# Toyota Tanzania — Business Intelligence & Marketing Analytics Dashboard
-
-> **A multi-dimensional Power BI analytics project covering sales performance, supply chain, marketing campaign effectiveness, digital traffic, after-sales operations, and customer voice for Toyota Tanzania (2025)**
-
----
-
-## Table of Contents
-
-- [Project Overview](#project-overview)
-- [Business Questions Answered](#business-questions-answered)
-- [Data Sources](#data-sources)
-- [Data Model](#data-model)
-- [Dashboard Pages](#dashboard-pages)
-- [Key KPIs & Metrics](#key-kpis--metrics)
-- [Key Insights](#key-insights)
-- [Tools & Technologies](#tools--technologies)
-- [How to Use This Report](#how-to-use-this-report)
-- [Project Structure](#project-structure)
-- [Author](#author)
+# Toyota Tanzania — Market Data Analysis
+**Tool:** Power BI &nbsp;|&nbsp; **Period:** 2025 &nbsp;|&nbsp; **Total Sales Revenue:** TZS 5.27bn &nbsp;|&nbsp; **Total Imports Cost:** $10.47M USD (~TZS 26.2bn)
 
 ---
 
-## Project Overview
+## 1. Sales & Vehicle Performance
 
-This project is a comprehensive **Business Intelligence dashboard** built in **Power BI** for Toyota Tanzania Ltd, analyzing 2025 business performance across six interconnected data domains. The dashboard is designed to give marketing, sales, and operations teams a single source of truth — enabling data-driven decisions across the entire customer lifecycle, from vehicle importation through to after-sales satisfaction.
+### Direct vs Showroom — Which channel earns more?
 
-The analysis covers **595 imported units**, **43 sales transactions worth 5.28 billion TZS**, **18 marketing campaigns**, **36 months of digital traffic data**, **30 service centre records**, and **25 customer survey responses** — all modelled into a unified star schema for cross-domain analysis.
-
----
-
-## Business Questions Answered
-
-### Sales & Revenue
-- Which vehicle model generates the most revenue, and which generates the most volume?
-- How does revenue trend month-over-month across 2025?
-- Which region (Dar es Salaam, Mbeya, Arusha, Mwanza) drives the highest sales?
-- What is the revenue split between Corporate, Fleet, SME, and Individual customers?
-- Does discounting correlate with higher transaction volume or lower margin?
-
-### Supply Chain & Imports
-- What is the estimated gross margin per model (import cost vs. selling price)?
-- Which supplier and source country provides the most vehicles by volume and value?
-- Are imported quantities aligned with sales velocity — or is stock building up?
-- What is the cost difference between air and sea freight, and when is each used?
-
-### Marketing Effectiveness
-- Which campaign channel (TV, Social Media, Facebook, Google Ads, Email, LinkedIn) delivers the best ROI?
-- What is the cost per lead and cost per conversion by channel?
-- How do lead-to-conversion rates compare across campaigns?
-- Is there a measurable lift in sales during or after campaign periods?
-- Which model-specific campaigns outperformed?
-
-### Digital Analytics
-- How has organic search traffic grown across 2025?
-- Which source/medium (Google Organic, Direct, Facebook, Instagram, YouTube, TikTok) converts best?
-- What are users searching for, and what does keyword intent reveal about the buying funnel?
-- How do bounce rate and session duration differ by channel?
-
-### After-Sales & Service
-- Which service type and location scores highest on customer satisfaction?
-- Are Fleet and Corporate customers more loyal (repeat visits) than Individual customers?
-- What is the revenue and profitability profile of different service types?
-- Which service jobs take the most labour hours and carry the highest parts cost?
-
-### Customer Voice
-- What does the typical buyer profile look like for each vehicle model?
-- What is the Net Promoter Score (NPS) proxy — and who are the detractors?
-- How does financing method preference vary by income group and age?
-- Which purchase channel (Showroom vs. Direct) is preferred by different demographics?
-
----
-
-## Data Sources
-
-All data is sourced from the Toyota Tanzania business intelligence Excel workbook (`Toyota-Analysis.xlsx`), containing six sheets:
-
-| Sheet Name | Records | Description |
+| Channel | Revenue | Units Sold |
 |---|---|---|
-| `sales vehicle` | 43 rows | Vehicle sales transactions Jan–Dec 2025 |
-| `vehicle imports data` | 25 rows | Inbound shipment records Jan–Dec 2025 |
-| `marketing campaign` | 18 rows | Campaign performance by channel Jan–Dec 2025 |
-| `vehicle digital` | 36 rows | Monthly website traffic by source/medium Jan–Dec 2025 |
-| `vehicle center operations` | 30 rows | Service centre job records Jan–Jun 2025 |
-| `customer survey` | 25 rows | Post-purchase customer satisfaction survey |
+| **Direct** | **TZS 3.05bn (58%)** | 45 units |
+| Showroom | TZS 2.21bn (42%) | 26 units |
+
+**Direct Sales wins overall.** But the channel to push depends on the month and customer type.
 
 ---
 
-## Data Model
+### Which customer type drives revenue in each channel?
 
-The project uses a **star schema** with `sales vehicle` as the central **fact table**, connected to four supporting dimension/supplementary tables via shared keys.
-
-```
-vehicle imports data ──── Model ────┐
-marketing campaign   ──── Date  ────┤
-vehicle digital      ──── Date  ────┤──► sales vehicle (FACT)
-vehicle center ops   ──── Model ────┤
-customer survey      ──── Model ────┘
-```
-
-### Relationships
-
-| From Table | Key Column | To Table | Key Column | Cardinality |
+| Channel | #1 Customer Type | Revenue | #2 Customer Type | Revenue |
 |---|---|---|---|---|
-| `vehicle imports data` | `Model` | `sales vehicle` | `Model` | Many-to-Many |
-| `marketing campaign` | `Start_Date` | `sales vehicle` | `Date` | Many-to-Many |
-| `vehicle digital` | `Date` | `sales vehicle` | `Date` | Many-to-One |
-| `vehicle center operations` | `Vehicle_Model` | `sales vehicle` | `Model` | Many-to-Many |
-| `customer survey` | `Vehicle_Model` | `sales vehicle` | `Model` | Many-to-Many |
+| Direct | Corporate | TZS 1.44bn | Fleet | TZS 1.07bn |
+| Showroom | Corporate | TZS 1.22bn | Individual | TZS 0.99bn |
 
-> All data transformations (column renaming, data type correction, date formatting, and derived columns) were handled in **Power Query** before loading into the model.
+**Corporate customers are the top revenue driver in both channels.** Fleet is exclusively Direct. Individuals buy only through Showroom. SME contributes TZS 0.54bn, all through Direct.
 
----
-
-## Dashboard Pages
-
-### Page 1 — Executive Summary
-High-level overview of 2025 business performance. KPI cards for total revenue, units sold, average transaction value, campaign ROI, service satisfaction, and NPS proxy. Year-at-a-glance sparklines for revenue and traffic trends.
-
-### Page 2 — Sales Performance
-Revenue and unit volume by model, region, customer type, sales channel, and payment method. Monthly revenue trend line. Discount analysis by customer segment. Top and bottom performing models by both value and volume.
-
-### Page 3 — Supply Chain & Imports
-Import volume and cost by model, supplier, and source country. Gross margin estimates (import cost USD vs. selling price TZS). Inventory turnover comparison — units imported vs. units sold by model. Shipping mode (Air vs. Sea) cost analysis.
-
-### Page 4 — Marketing Campaign Analytics
-Campaign ROI ranked by channel. Cost per lead and cost per conversion by channel. Lead-to-conversion funnel. Budget allocation vs. revenue generated. Month-by-month campaign activity overlaid with sales trends.
-
-### Page 5 — Digital & Web Analytics
-Monthly traffic trend by source/medium. Bounce rate vs. session duration scatter (traffic quality). Conversion rate by channel. Top-performing keywords and their associated conversion types. Organic traffic growth trend (Jan–Dec 2025).
-
-### Page 6 — Service Centre Operations
-Service job frequency by type and location. Average satisfaction score by service type, location, and customer type. Repeat customer rate by segment. Labour hours vs. revenue per job. Parts cost vs. total job value analysis.
-
-### Page 7 — Customer Insights
-Buyer persona profiles by vehicle model. Age group, gender, and income distribution. Purchase channel preference by demographic. Financing method vs. income group. NPS proxy breakdown — promoters vs. detractors.
+**Action:** Prioritise corporate account management across both channels. Use Showroom to target individual buyers — it is the only channel reaching them.
 
 ---
 
-## Key KPIs & Metrics
+### Which models sell best in each channel?
 
-| KPI | Value | Notes |
+| Channel | Model | Revenue |
 |---|---|---|
-| Total Sales Revenue | 5.28B TZS | 43 transactions, Jan–Dec 2025 |
-| Units Sold | 71 | Across 8 models |
-| Total Import Cost | $10.47M USD | 595 units, 25 shipments |
-| Average Transaction Value | 122.8M TZS | Per sales record |
-| Best Campaign ROI | 14,400% | Eid Special — Facebook |
-| Worst Campaign ROI | -100% | Service Campaign — Radio |
-| Average Service Satisfaction | 4.62 / 5 | 30 service records |
-| Repeat Customer Rate (Service) | 67% | 20 of 30 are repeat visits |
-| Customer NPS Proxy | 92% | Would recommend Toyota |
-| Organic Traffic Growth | +54% | Jan 1,250 → Dec 1,920 users |
-| Digital Conversions (Annual) | 413 | Across all channels |
-| Average Campaign ROI | 6,712% | Excluding failed Radio campaign |
+| Direct | Hilux DX | TZS 1.62bn |
+| Direct | Fortuner | TZS 1.44bn |
+| Showroom | Land Cruiser 300 | TZS 0.81bn |
+| Showroom | Rav4 | TZS 0.42bn |
+| Showroom | Land Cruiser Prado | TZS 0.41bn |
+
+**Hilux DX and Fortuner belong in Direct. Land Cruiser 300, Rav4, and Prado belong in Showroom.**
 
 ---
 
-## Key Insights
+### Model prices vs what they earn — where to focus campaigns
 
-### 1. Digital channels outperform traditional media by ~6x on cost per conversion
-Facebook (Eid Special): **82,759 TZS per conversion** vs. TV (Q1 Hilux Push): **529,412 TZS per conversion**. Yet TV and Radio absorb ~38% of total campaign budget while delivering only ~22% of campaign revenue. This represents a significant budget reallocation opportunity.
+| Model | Unit Price | Total Revenue | Units Sold | Verdict |
+|---|---|---|---|---|
+| Land Cruiser 300 | TZS 275M | TZS 0.81bn | 3 | High price, low volume — campaign needed |
+| Land Cruiser Prado | TZS 140M | TZS 0.41bn | 3 | High price, low volume — campaign needed |
+| Fortuner | TZS 123M | **TZS 1.55bn** | 13 | High price + sells well — protect stock |
+| Rav4 | TZS 108M | TZS 0.42bn | 4 | Mid-high price, low volume — campaign needed |
+| Rush | TZS 73M | TZS 0.35bn | 5 | Mid price, moderate volume |
+| **Hilux DX** | TZS 51M | **TZS 1.62bn** | 33 | Highest revenue model overall — volume driver |
+| Passo | TZS 10M | TZS 0.10bn | 10 | Low price, low revenue — volume only |
 
-### 2. The Hilux DX is the volume king; Land Cruiser 300 is the margin king
-Hilux DX is the most imported model (198 units), the most sold by frequency (8 transactions), and the most searched online ("hilux double cabin" is the #1 organic keyword). However, Land Cruiser 300 generates the highest revenue per transaction (265–275M TZS) on the lowest import volume — making it the most profitable model per unit.
-
-### 3. Passo faces a potential overstock problem
-230 Passo units were imported across 2025, but only ~11 units appear in sales records. At 9.5–10.5M TZS per unit, these are the lowest-margin vehicles in the range. A targeted pricing or campaign push may be needed to move inventory.
-
-### 4. Fleet and Corporate customers drive disproportionate revenue
-Fleet customers receive up to 7% discount but place the largest multi-unit orders (3–5 vehicles per transaction). Corporate customers buying Fortuners and Land Cruisers via Finance account for the highest single-transaction values. Both segments show near-100% repeat service loyalty.
-
-### 5. Organic search traffic grew 54% across the year with zero paid search spend
-Google Organic grew from 1,250 users in January to 1,920 in December — the highest-converting channel at ~1.1% conversion rate, driven entirely by brand and model-specific keyword searches. This demonstrates strong unpaid brand equity.
-
-### 6. The one failed campaign reveals a channel-audience mismatch
-The Radio Service Campaign (8M TZS budget) generated 210 leads but **zero conversions** — a -100% ROI. Cross-referencing with customer survey data shows that service customers skew toward Fleet and Corporate types who are unlikely to respond to radio. SMS (CAMP013) with a 4.5M budget achieved 380 conversions at a fraction of the cost, suggesting direct channels work far better for after-sales.
+**Fortuner and Hilux DX are the two pillars of revenue.** Land Cruiser 300 and Prado are high-margin opportunities being left on the table — they sell too few units for their price.
 
 ---
 
-## Tools & Technologies
+### Which months to push each channel?
 
-| Tool | Purpose |
+| Month | Revenue | Push This Channel |
+|---|---|---|
+| **August** | TZS 0.66bn | Direct (0.39bn) |
+| **November** | TZS 0.59bn | Showroom (0.39bn) |
+| **December** | TZS 0.58bn | Direct (0.50bn) |
+| **April** | TZS 0.52bn | Showroom (0.38bn) |
+| **March** | TZS 0.48bn | Direct (0.47bn) |
+| June | TZS 0.44bn | Showroom (0.25bn) |
+| July | TZS 0.42bn | Direct (0.34bn) |
+| September | TZS 0.36bn | Showroom (0.26bn) |
+| October | TZS 0.33bn | Direct (0.24bn) |
+| May | TZS 0.32bn | Direct (0.24bn) |
+| January | TZS 0.29bn | Direct (0.15bn) |
+| February | TZS 0.28bn | Showroom (0.19bn) |
+
+**Direct dominates:** March, May, July, August, October, December.  
+**Showroom dominates:** February, April, June, September, November.
+
+**Top 3 revenue months are August, November, December** — these need maximum budget allocation. February and January are the weakest months across both channels.
+
+---
+
+## 2. Marketing Campaign Performance
+
+### Top campaigns by ROI
+
+| Campaign | Channel | Budget | Revenue | ROI |
+|---|---|---|---|---|
+| **Eid Special** | Facebook | TZS 12M | TZS 1.74bn | **14,400%** |
+| **New Passo** | Social Media | TZS 9.5M | TZS 1.31bn | **13,716%** |
+| **Passo City Launch** | Social Media | TZS 8.5M | TZS 1.12bn | **13,076%** |
+| Hilux 4x4 | Facebook | TZS 11M | TZS 1.43bn | 12,855% |
+| Finance Offers | Google Ads | TZS 15M | TZS 1.44bn | 9,483% |
+| Year End Sale | Multi-channel | TZS 65M | TZS 6.16bn | 9,377% |
+| Fortuner Corporate | LinkedIn | TZS 12M | TZS 1.01bn | 8,300% |
+
+**Facebook and Social Media deliver the highest ROI.** Eid Special on Facebook generated TZS 1.74bn from only TZS 12M budget. These two channels are the most cost-efficient in the portfolio.
+
+**Key insight on high-price vs low-price models:**
+- Passo (TZS 10M) campaigns on Social Media get massive ROI because the low price drives high conversions (112–125 conversions per campaign).
+- Fortuner (TZS 123M) on LinkedIn gets 8,300% ROI with only 42 conversions — fewer buyers but each sale is worth far more.
+- **Best strategy:** Run Facebook and Social Media for volume models (Hilux, Passo, Rush). Use LinkedIn for corporate/premium models (Fortuner, Land Cruiser, Rav4).
+
+---
+
+### Channel ROI ranking
+
+| Channel | Avg ROI |
 |---|---|
-| **Power BI Desktop** | Dashboard development, data modelling, DAX measures, visualizations |
-| **Power Query (M language)** | Data transformation, column typing, date formatting, table shaping |
-| **DAX** | Calculated measures (gross margin estimate, conversion rate, ROI, repeat rate) |
-| **Microsoft Excel** | Source data — 6-sheet business intelligence workbook |
-| **Python (pandas, numpy)** | Exploratory data analysis and data validation prior to Power BI import |
+| Facebook | 13,628% |
+| Social Media | 13,396% |
+| Multi-channel | 9,377% |
+| LinkedIn | 8,300% |
+| Google Ads | 7,414% |
+| Instagram | 6,900% |
+| TV | 2,477% |
+| Radio | **-100%** |
+
+**TV, Radio, and Print deliver the weakest ROI.** Every TZS spent on digital (Facebook, Social, Google) outperforms traditional media by 3–5x.
 
 ---
 
-## How to Use This Report
+### Campaigns where budget exceeded or wasted revenue
 
-1. Clone or download this repository
-2. Open `Toyota-Analysis.pbix` in **Power BI Desktop** (free download at [powerbi.microsoft.com](https://powerbi.microsoft.com))
-3. If prompted to refresh data, ensure `Toyota-Analysis.xlsx` is in the same folder as the `.pbix` file
-4. Use the **page navigation** tabs at the bottom to move between dashboard sections
-5. Use the **slicers** on each page to filter by Model, Region, Customer Type, Channel, or Date
-6. Cross-filter is enabled — clicking any chart element will filter all visuals on the page
+| Campaign | Channel | Budget | Revenue | Why it failed |
+|---|---|---|---|---|
+| **Service Campaign** | Radio | TZS 8M | **TZS 0** | 0 conversions from 18,500 clicks — wrong channel for vehicle purchases, no buying intent on radio |
 
-> **Note:** The data covers Jan–Dec 2025 for Sales, Imports, Marketing, and Digital; and Jan–Jun 2025 for Service Centre operations.
+**Only one campaign lost money: Service Campaign on Radio.** It generated 18,500 clicks and 210 leads but zero conversions — Radio reaches listeners passively, they do not act on car purchase calls-to-action. **Stop Radio spend immediately.**
 
----
-
-## Project Structure
-
-```
-toyota-analysis/
-│
-├── Toyota-Analysis.pbix          # Power BI report file
-├── Toyota-Analysis.xlsx          # Source data (6 sheets)
-├── README.md                     # Project documentation
-│
-└── assets/
-    └── screenshots/              # Dashboard preview images
-```
+All other campaigns were profitable. The lowest performing profitable campaign was Service Reminder (SMS, ROI 1,167%) — low revenue (TZS 60M) but very low cost (TZS 4.5M), so still net positive.
 
 ---
 
-## Author
+## 3. Customer Survey
 
-**Hilda Galder Gabriel**
-BSc Computer Science — University of Dar es Salaam
+### Who are our customers?
 
-[![GitHub](https://img.shields.io/badge/GitHub-Dbrey27-181717?style=flat&logo=github)](https://github.com/Dbrey27)
-[![Email](https://img.shields.io/badge/Email-hildagalder12%40gmail.com-D14836?style=flat&logo=gmail)](mailto:hildagalder12@gmail.com)
+**25 survey respondents.** Average satisfaction: **4.40 / 5.** Would recommend Toyota: **92% (23 out of 25).**
+
+| Age Group | Count | Top Model Preferred | Top Location |
+|---|---|---|---|
+| **35–44** | **9 (36%)** | Hilux (3), Fortuner (2), Land Cruiser (2) | Dar es Salaam (4) |
+| 25–34 | 6 (24%) | Rush (2), Fortuner (2) | Dar es Salaam (2) |
+| 45–54 | 5 (20%) | Land Cruiser (2) | Mbeya (3) |
+| 55+ | 3 (12%) | Rav4 (2) | Dar es Salaam (1) |
+| 18–24 | 2 (8%) | Rush (1), Passo (1) | Dar es Salaam (1) |
+
+**35–44 is the largest customer group (36%)** — and they buy the highest-revenue models: Hilux, Fortuner, Land Cruiser.
 
 ---
 
-*Part of a growing data analytics portfolio. Also see: [Telecom Customer Churn Analysis](https://github.com/Dbrey27/telecom-churn-analysis)*
+### Where are customers located?
+
+| Location | Customers | Top Model |
+|---|---|---|
+| **Dar es Salaam** | **10 (40%)** | Hilux (4), Rav4 (2) |
+| Mbeya | 5 (20%) | Land Cruiser (2) |
+| Arusha | 5 (20%) | Passo (3), Fortuner (2) |
+| Mwanza | 5 (20%) | Rush (2), Land Cruiser (1) |
+
+**Dar es Salaam has 40% of customers.** It is the primary market. Mbeya, Arusha, and Mwanza each hold 20% — equal opportunity markets outside DSM.
+
+---
+
+### Campaign targeting by age and location
+
+| Who to target | Where | Model to promote | Best channel |
+|---|---|---|---|
+| Age 35–44 | Dar es Salaam | Hilux DX, Fortuner | Facebook |
+| Age 25–34 | Dar es Salaam | Rush, Fortuner | Social Media / Instagram |
+| Age 45–54 | Mbeya | Land Cruiser | LinkedIn / Direct Mail |
+| All ages | Arusha | Passo | Social Media |
+| All ages | Mwanza | Rush | Facebook / Instagram |
+
+**Financing:** 10 customers use Bank Loans (40%), 7 pay Cash (28%). Partner with banks to offer pre-approved Toyota financing — it directly addresses the top payment method.
+
+---
+
+## 4. Imports Data
+
+### What is being imported — quantity and cost
+
+| Model | Units Imported | Import Cost (USD) | Import Cost (TZS ~) | Sales Revenue (TZS) |
+|---|---|---|---|---|
+| Passo | 230 | $0.57M | TZS 1.44bn | TZS 0.10bn |
+| Hilux DX | 198 | $3.66M | TZS 9.16bn | TZS 1.62bn |
+| Fortuner | 63 | $2.39M | TZS 5.97bn | TZS 1.55bn |
+| Rush | 42 | $0.88M | TZS 2.19bn | TZS 0.35bn |
+| Rav4 | 26 | $0.84M | TZS 2.10bn | TZS 0.42bn |
+| Land Cruiser Prado | 22 | $0.93M | TZS 2.32bn | TZS 0.41bn |
+| Land Cruiser 300 | 14 | $1.20M | TZS 2.99bn | TZS 0.81bn |
+
+**All models show negative gross margin in this period** — sales revenue recorded is lower than import cost. This is because imports are stocked inventory; not all imported units are sold yet in the same period. The full stock will sell across future months.
+
+**Passo is the highest import risk:** 230 units imported at TZS 1.44bn cost, only TZS 0.10bn revenue recorded — meaning most imported stock has not yet converted to sales. It needs aggressive campaign support to move.
+
+---
+
+### Which models sell fastest (monthly trend)
+
+Based on monthly data, models that appear consistently across months:
+
+| Model | Months with sales | Pattern |
+|---|---|---|
+| **Hilux DX** | 10 out of 12 months | Fastest — sells almost every month |
+| **Fortuner** | 8 out of 12 months | Fast — strong and consistent |
+| **Land Cruiser 300** | 4 out of 12 months | Slow — only April, August, November, December |
+| **Passo** | 10 out of 12 months | Frequent but very low value per sale |
+
+**Hilux DX is the most consistent seller** — present in 10 months. Land Cruiser 300 sells only in high-season months despite being the most expensive model at TZS 275M. It needs targeted corporate campaigns in its off-peak months.
+
+---
+
+### When are import costs highest and cheapest?
+
+| Month | Import Cost | Advice |
+|---|---|---|
+| **April** | **$1.43M** — Most expensive | Avoid large orders in April |
+| August | $1.19M | Expensive |
+| October | $1.05M | Expensive |
+| **July** | **$0.53M** — Cheapest | Best month to bulk import |
+| September | $0.55M | Cheap |
+| November | $0.57M | Cheap |
+
+**Import in July, September, and November — costs are lowest.** August and December are peak sales months, so importing in July means stock arrives just in time for the August revenue peak.
+
+---
+
+## 5. Overall: Revenue vs Expenses
+
+| Item | Value |
+|---|---|
+| Total Sales Revenue (2025) | TZS 5.27bn |
+| Total Import Cost | $10.47M USD (~TZS 26.2bn) |
+| Total Marketing Budget | TZS 356.5M |
+| Total Marketing Revenue Generated | TZS 21.1bn |
+| Marketing ROI (average) | 6,710% |
+
+**The import cost appears to exceed sales revenue in this period because this is a 12-month import cycle vs. partial sales recognition** — not all imported stock sold within the same year. The marketing investment of TZS 356.5M generated TZS 21.1bn in tracked campaign revenue, a 59x return.
+
+The one true loss: **Service Campaign (Radio) burned TZS 8M with TZS 0 revenue.** Every other campaign generated profit.
+
+---
+
+## Key Actions Summary
+
+| # | Action | Evidence |
+|---|---|---|
+| 1 | Push Direct in: March, May, July, Aug, Oct, Dec | Direct wins 7 of 12 months |
+| 2 | Push Showroom in: Feb, Apr, Jun, Sep, Nov | Showroom wins 5 of 12 months |
+| 3 | Stock Hilux DX and Fortuner in Direct; Land Cruiser + Rav4 in Showroom | Channel-model revenue data |
+| 4 | Move all campaign spend from Radio to Facebook / Social Media | Radio = -100% ROI; Facebook = 13,628% ROI |
+| 5 | Target age 35–44 in Dar es Salaam with Hilux and Fortuner on Facebook | Largest segment, highest revenue models |
+| 6 | Run Land Cruiser 300 and Prado campaigns — high price, too few sales | TZS 275M and 140M units sitting under-sold |
+| 7 | Activate Passo campaigns urgently — 230 units imported, only TZS 0.10bn sold | Highest import volume, lowest revenue conversion |
+| 8 | Bulk import in July (cheapest at $0.53M) ahead of August peak sales | Cheapest import month before top revenue month |
